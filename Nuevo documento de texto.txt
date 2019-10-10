@@ -1,0 +1,68 @@
+package ejer1;
+
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class prueba {
+
+	static int numeros[][];
+	static String nombre ="";
+	static int num1 =20;//columnas
+	static int num2 =20;//filas
+	static String aux ="";
+	static int N =100;
+	static int M =0;
+	
+	public static Void crearArray(){
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Crear array. ");
+		System.out.println("····························");
+		System.out.println("Nombre de columnes: (max 10) ");
+		aux =(String)sc.nextLine();
+		num1 = Integer.parseInt (aux);
+		System.out.println("····························");
+		System.out.println("Nombre de files: (max 10)");
+		aux =(String)sc.nextLine();
+		num2 = Integer.parseInt (aux);
+		System.out.println("····························");
+		System.out.println("Columnes " + num1 + " , files " + num2);
+		System.out.println("····························");
+		return null;
+	}
+	
+	public static void main(String[] args) {
+		while (num1>10 || num2>10) {
+			crearArray();
+		}
+		int numeros[][]= new int[num1][num2];
+		
+		for (int i = 0; i < num1; i++) {
+			for (int j = 0; j < num2; j++) {
+				int generarnumero = (int) Math.floor(Math.random()*(N-M+1)+M); 
+				numeros[i][j]= generarnumero;
+				System.out.println("posicio ["+i+"]["+j+"] -> "+numeros[i][j]);
+			}
+		}
+		
+		System.out.println("·············Ordenar···············");
+		int cuenta=0;
+		for (boolean ordenado=false;!ordenado;){
+			for (int i = 0; i < numeros.length-1; i++) {
+				for (int j = 0; j < numeros.length-1; j++) {
+					if(numeros[i][j]>numeros[i][j+1]){
+						int auxx=numeros[i][j];
+						numeros[i][j]=numeros[i][j+1];
+						numeros[i][j+1]=auxx;
+						cuenta ++;
+					}
+					System.out.println("pos ["+i+"]["+j+"] -> "+numeros[i][j]);
+				}
+				System.out.println("····························");
+				if (cuenta==0){
+	                ordenado=true;
+	            }
+				cuenta=0;
+			}
+			System.out.println("==================================");
+		}

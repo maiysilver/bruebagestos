@@ -1,0 +1,819 @@
+package menu;
+
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.awt.event.ActionEvent;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+
+import java.awt.Panel;
+import java.awt.RenderingHints;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.CardLayout;
+import javax.swing.JTabbedPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.SwingConstants;
+
+public class Dames {
+
+	private JFrame frmDamas;
+	private JTextField input;
+	private JPasswordField pwdContraseña;
+	private JTextField input2;
+	private JPasswordField pwdContraseña2;
+	JLabel etiqueta = new JLabel("");
+	private String patata = "";
+	private String pass = "";
+	private String patata2 = "";
+	private String pass2 = "";
+	String codi="";
+	String codi2="";
+	boolean vacio=false;
+	boolean exist=false;
+	private JTextField aviso;
+	private JTextField txtAsssssssssssssssssssssss;
+	private JTextField txtErererer;
+	int piezas[][] = {{1,3,1,3,1,3,1,3},{3,1,3,1,3,1,3,1},{1,3,1,3,1,3,1,3},{1,1,1,1,1,1,1,1},{1,1,1,1,1,1,1,1},{2,1,2,1,2,1,2,1},{1,2,1,2,1,2,1,2},{2,1,2,1,2,1,2,1}};
+	private static int tileSize =374/8;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Dames window = new Dames();
+					window.frmDamas.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Dames() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frmDamas = new JFrame();
+		frmDamas.setResizable(false);
+		frmDamas.setTitle("Damas");
+		//tamaño del frame
+		frmDamas.setBounds(100, 100, 450, 475);
+		frmDamas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmDamas.getContentPane().setLayout(null);
+		pantalla_inicio();
+	}	
+	
+	private void pantalla_inicio() {
+		frmDamas.getContentPane().setLayout(null);
+		
+		//boton iniciar partida
+		JButton button1 = new JButton("Iniciar partida");
+		button1.setFont(new Font("Tahoma", Font.BOLD, 17));
+		button1.setBounds(133, 13, 170, 64);
+		button1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				reiniciar_menu();
+				selec_usuario();
+			}
+		});
+		frmDamas.getContentPane().add(button1);
+		
+		JButton button2 = new JButton("Crear usuario");
+		button2.setFont(new Font("Tahoma", Font.BOLD, 13));
+		button2.setBounds(157, 90, 130, 41);
+		button2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				reiniciar_menu();
+				crear_usuario();
+			}
+		});
+		frmDamas.getContentPane().add(button2);
+		
+		JButton button3 = new JButton("Puntuaciones");
+		button3.setFont(new Font("Tahoma", Font.BOLD, 13));
+		button3.setBounds(157, 146, 130, 41);
+		button3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				reiniciar_menu();
+				//selec_usuario();
+			}
+		});
+		frmDamas.getContentPane().add(button3);
+		
+		
+		
+	}
+	
+	private void selec_usuario(){
+		
+		input = new JTextField();
+		input.setBounds(87, 13, 174, 41);
+		frmDamas.getContentPane().add(input);
+		input.setColumns(10);
+		
+		pwdContraseña = new JPasswordField();
+		pwdContraseña.setText("contrase\u00F1a");
+		pwdContraseña.setBounds(87, 67, 135, 22);
+		frmDamas.getContentPane().add(pwdContraseña);
+		
+		JLabel lblJugador = new JLabel("Jugador 1");
+		lblJugador.setBounds(19, 25, 56, 16);
+		frmDamas.getContentPane().add(lblJugador);
+		
+		input2 = new JTextField();
+		input2.setColumns(10);
+		input2.setBounds(85, 100, 174, 41);
+		frmDamas.getContentPane().add(input2);
+		
+		JLabel lblJugador_1 = new JLabel("Jugador 2");
+		lblJugador_1.setBounds(17, 112, 56, 16);
+		frmDamas.getContentPane().add(lblJugador_1);
+		
+		JButton btnStart = new JButton("Start");
+		btnStart.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				boolean paria=false;
+				reiniciar_menu();				
+				patata=input.getText();
+				pass=String.valueOf(pwdContraseña.getPassword());
+				patata2=input2.getText();
+				pass2=String.valueOf(pwdContraseña2.getPassword());
+				
+				//if(comprobarUsuario(patata,pass)==true && comprobarUsuario(patata2,pass2)==true) {
+				if(true==true && true==true) {
+					aviso = new JTextField();
+					aviso.setFont(new Font("Verdana", Font.BOLD, 14));
+					aviso.setBackground(Color.green);
+					aviso.setHorizontalAlignment(SwingConstants.CENTER);
+					aviso.setText("Usuario "+patata+" aceptado");
+					aviso.setBounds(121, 130, 200, 22);
+					frmDamas.getContentPane().add(aviso);
+					aviso.setColumns(10);
+				
+					aviso = new JTextField();
+					aviso.setFont(new Font("Verdana", Font.BOLD, 14));
+					aviso.setBackground(Color.green);
+					aviso.setHorizontalAlignment(SwingConstants.CENTER);
+					aviso.setText("Usuario "+patata2+" aceptado");
+					aviso.setBounds(121, 175, 200, 22);
+					frmDamas.getContentPane().add(aviso);
+					aviso.setColumns(10);
+					
+					JButton btnVolver = new JButton("Iniciar");
+					btnVolver.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							reiniciar_menu();
+							tablero();
+							
+						}
+					});
+					btnVolver.setFont(new Font("Verdana", Font.BOLD, 14));
+					btnVolver.setBounds(171, 220, 97, 25);
+					frmDamas.getContentPane().add(btnVolver);
+					
+				}else{
+					aviso = new JTextField();
+					aviso.setFont(new Font("Verdana", Font.BOLD, 14));
+					aviso.setBackground(Color.red);
+					aviso.setHorizontalAlignment(SwingConstants.CENTER);
+					aviso.setText("Error, vuelve a intentarlo.");
+					aviso.setBounds(121, 190, 210, 22);
+					frmDamas.getContentPane().add(aviso);
+					aviso.setColumns(10);
+					
+					JButton btnVolver = new JButton("volver");
+					btnVolver.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							reiniciar_menu();
+							pantalla_inicio();
+						}
+					});
+					btnVolver.setFont(new Font("Verdana", Font.BOLD, 14));
+					btnVolver.setBounds(171, 220, 97, 25);
+					frmDamas.getContentPane().add(btnVolver);
+				}
+			}
+		});
+		
+		btnStart.setBounds(164, 178, 97, 25);
+		frmDamas.getContentPane().add(btnStart);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				reiniciar_menu();
+				pantalla_inicio();
+			}
+		});
+		btnVolver.setBounds(30, 178, 97, 25);
+		frmDamas.getContentPane().add(btnVolver);
+		
+		pwdContraseña2 = new JPasswordField();
+		pwdContraseña2.setText("contrase\u00F1a");
+		pwdContraseña2.setBounds(88, 149, 135, 22);
+		frmDamas.getContentPane().add(pwdContraseña2);
+	}
+	
+	private void fichas(int num, String ficha){
+		//1-fichaNegraNegra  2-fichaNegraBlanca 1-fichaBlancaNegra  1-fichaBlancaBlanca
+		switch (num) {
+		case 1:
+			ImageIcon icon1 = new ImageIcon("ficha_b_b.png");
+			JLabel fit1 = new JLabel();
+			fit1.setBounds(0, 0, 50, 50);
+			fit1.setIcon(icon1);
+			//ficha.add(fit1);
+
+			break;
+		case 2:
+			ImageIcon icon2 = new ImageIcon("ficha_n_b.png");
+			JLabel fit2 = new JLabel();
+			fit2.setBounds(0, 0, 50, 50);
+			fit2.setIcon(icon2);
+			break;
+		case 3:
+			ImageIcon icon3 = new ImageIcon("ficha_b_n.png");
+			JLabel fit3 = new JLabel();
+			fit3.setBounds(0, 0, 50, 50);
+			fit3.setIcon(icon3);
+			break;
+		case 4: 
+			ImageIcon icon4 = new ImageIcon("ficha_b_b.png");
+			JLabel fit4 = new JLabel();
+			fit4.setBounds(0, 0, 50, 50);
+			fit4.setIcon(icon4);
+			break;	
+		default:
+			
+			break;
+		}
+		ImageIcon icon = new ImageIcon("ficha_n_b.png");
+		JLabel fit1 = new JLabel();
+		fit1.setBounds(0, 0, 50, 50);
+		fit1.setIcon(icon);
+		
+	}
+	
+	
+	
+	private void tablero(){
+		String ficha_b_b = "ficha_b_b.png";
+		String ficha_b_n = "ficha_b_n.png";
+		String ficha_n_b = "ficha_n_b.png";
+		String ficha_n_n = "ficha_n_n.png";
+		int x = 0;
+		int y = 0;
+		
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				JPanel panel_1 = new JPanel();
+				panel_1.setBackground(Color.WHITE);
+				panel_1.setBounds(56, 55, 56, 56);
+				ImageIcon icon1 = new ImageIcon(ficha_b_n);
+				JLabel fit1 = new JLabel();
+				fit1.setBounds(0, 0, 50, 50);
+				fit1.setIcon(icon1);
+				panel_1.add(fit1);
+				frmDamas.getContentPane().add(panel_1);
+			}
+		}
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		panel.setBounds(0, 0, 56, 56);
+		frmDamas.getContentPane().add(panel);
+		
+		
+		
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setBounds(56, 55, 56, 56);
+		ImageIcon icon1 = new ImageIcon(ficha_b_n);
+		JLabel fit1 = new JLabel();
+		fit1.setBounds(0, 0, 50, 50);
+		fit1.setIcon(icon1);
+		panel_1.add(fit1);
+		frmDamas.getContentPane().add(panel_1);
+		
+		
+		
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(Color.BLACK);
+		panel_2.setBounds(388, 0, 56, 56);
+		ImageIcon icon2 = new ImageIcon(ficha_b_n);
+		JLabel fit2 = new JLabel();
+		fit2.setBounds(0, 0, 50, 50);
+		fit2.setIcon(icon2);
+		panel_2.add(fit2);
+		frmDamas.getContentPane().add(panel_2);
+		
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(Color.black);
+		panel_3.setBounds(0, 55, 56, 56);
+		ImageIcon icon3 = new ImageIcon(ficha_b_n);
+		JLabel fit3 = new JLabel();
+		fit3.setBounds(0, 0, 50, 50);
+		fit3.setIcon(icon3);
+		panel_3.add(fit3);
+		frmDamas.getContentPane().add(panel_3);
+		
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(Color.BLACK);
+		panel_4.setBounds(111, 55, 56, 56);
+		frmDamas.getContentPane().add(panel_4);
+		
+		JPanel panel_5 = new JPanel();
+		panel_5.setBackground(Color.WHITE);
+		panel_5.setBounds(167, 55, 56, 56);
+		frmDamas.getContentPane().add(panel_5);
+		
+		JPanel panel_6 = new JPanel();
+		panel_6.setBackground(Color.BLACK);
+		panel_6.setBounds(223, 55, 56, 56);
+		frmDamas.getContentPane().add(panel_6);
+		
+		JPanel panel_7 = new JPanel();
+		panel_7.setBackground(Color.WHITE);
+		panel_7.setBounds(278, 55, 56, 56);
+		frmDamas.getContentPane().add(panel_7);
+		
+		JPanel panel_8 = new JPanel();
+		panel_8.setBackground(Color.BLACK);
+		panel_8.setBounds(56, 0, 56, 56);
+		ImageIcon icon8 = new ImageIcon(ficha_b_b);
+		JLabel fit8 = new JLabel();
+		fit8.setBounds(0, 0, 50, 50);
+		fit8.setIcon(icon8);
+		panel_8.add(fit1);
+		frmDamas.getContentPane().add(panel_8);
+		
+		JPanel panel_9 = new JPanel();
+		panel_9.setBackground(Color.BLACK);
+		panel_9.setBounds(333, 55, 56, 56);
+		frmDamas.getContentPane().add(panel_9);
+		
+		JPanel panel_10 = new JPanel();
+		panel_10.setBackground(Color.WHITE);
+		panel_10.setBounds(111, 0, 56, 56);
+		frmDamas.getContentPane().add(panel_10);
+		
+		JPanel panel_11 = new JPanel();
+		panel_11.setBackground(Color.WHITE);
+		panel_11.setBounds(388, 55, 56, 56);
+		frmDamas.getContentPane().add(panel_11);
+		
+		JPanel panel_12 = new JPanel();
+		panel_12.setBackground(Color.WHITE);
+		panel_12.setBounds(388, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_12);
+		
+		JPanel panel_13 = new JPanel();
+		panel_13.setBackground(Color.BLACK);
+		panel_13.setBounds(388, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_13);
+		
+		JPanel panel_14 = new JPanel();
+		panel_14.setBackground(Color.BLACK);
+		panel_14.setBounds(333, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_14);
+		
+		JPanel panel_15 = new JPanel();
+		panel_15.setBackground(Color.WHITE);
+		panel_15.setBounds(333, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_15);
+		
+		JPanel panel_16 = new JPanel();
+		panel_16.setBackground(Color.WHITE);
+		panel_16.setBounds(278, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_16);
+		
+		JPanel panel_17 = new JPanel();
+		panel_17.setBackground(Color.BLACK);
+		panel_17.setBounds(278, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_17);
+		
+		JPanel panel_18 = new JPanel();
+		panel_18.setBackground(Color.BLACK);
+		panel_18.setBounds(223, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_18);
+		
+		JPanel panel_19 = new JPanel();
+		panel_19.setBackground(Color.WHITE);
+		panel_19.setBounds(223, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_19);
+		
+		JPanel panel_20 = new JPanel();
+		panel_20.setBackground(Color.BLACK);
+		panel_20.setBounds(167, 0, 56, 56);
+		frmDamas.getContentPane().add(panel_20);
+		
+		JPanel panel_21 = new JPanel();
+		panel_21.setBackground(Color.WHITE);
+		panel_21.setBounds(167, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_21);
+		
+		JPanel panel_22 = new JPanel();
+		panel_22.setBackground(Color.BLACK);
+		panel_22.setBounds(167, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_22);
+		
+		JPanel panel_23 = new JPanel();
+		panel_23.setBackground(Color.BLACK);
+		panel_23.setBounds(111, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_23);
+		
+		JPanel panel_24 = new JPanel();
+		panel_24.setBackground(Color.WHITE);
+		panel_24.setBounds(111, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_24);
+		
+		JPanel panel_25 = new JPanel();
+		panel_25.setBackground(Color.WHITE);
+		panel_25.setBounds(56, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_25);
+		
+		JPanel panel_26 = new JPanel();
+		panel_26.setBackground(Color.BLACK);
+		panel_26.setBounds(56, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_26);
+		
+		JPanel panel_27 = new JPanel();
+		panel_27.setBackground(Color.BLACK);
+		panel_27.setBounds(0, 166, 56, 56);
+		frmDamas.getContentPane().add(panel_27);
+		
+		JPanel panel_28 = new JPanel();
+		panel_28.setBackground(Color.WHITE);
+		panel_28.setBounds(0, 111, 56, 56);
+		frmDamas.getContentPane().add(panel_28);
+		
+		JPanel panel_29 = new JPanel();
+		panel_29.setBackground(Color.WHITE);
+		panel_29.setBounds(388, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_29);
+		
+		JPanel panel_30 = new JPanel();
+		panel_30.setBackground(Color.BLACK);
+		panel_30.setBounds(388, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_30);
+		
+		JPanel panel_31 = new JPanel();
+		panel_31.setBackground(Color.BLACK);
+		panel_31.setBounds(333, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_31);
+		
+		JPanel panel_32 = new JPanel();
+		panel_32.setBackground(Color.WHITE);
+		panel_32.setBounds(333, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_32);
+		
+		JPanel panel_33 = new JPanel();
+		panel_33.setBackground(Color.WHITE);
+		panel_33.setBounds(278, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_33);
+		
+		JPanel panel_34 = new JPanel();
+		panel_34.setBackground(Color.BLACK);
+		panel_34.setBounds(278, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_34);
+		
+		JPanel panel_35 = new JPanel();
+		panel_35.setBackground(Color.BLACK);
+		panel_35.setBounds(223, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_35);
+		
+		JPanel panel_36 = new JPanel();
+		panel_36.setBackground(Color.WHITE);
+		panel_36.setBounds(223, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_36);
+		
+		JPanel panel_37 = new JPanel();
+		panel_37.setBackground(Color.WHITE);
+		panel_37.setBounds(167, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_37);
+		
+		JPanel panel_38 = new JPanel();
+		panel_38.setBackground(Color.WHITE);
+		panel_38.setBounds(223, 0, 56, 56);
+		frmDamas.getContentPane().add(panel_38);
+		
+		JPanel panel_39 = new JPanel();
+		panel_39.setBackground(Color.BLACK);
+		panel_39.setBounds(167, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_39);
+		
+		JPanel panel_40 = new JPanel();
+		panel_40.setBackground(Color.BLACK);
+		panel_40.setBounds(111, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_40);
+		
+		JPanel panel_41 = new JPanel();
+		panel_41.setBackground(Color.WHITE);
+		panel_41.setBounds(111, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_41);
+		
+		JPanel panel_42 = new JPanel();
+		panel_42.setBackground(Color.WHITE);
+		panel_42.setBounds(56, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_42);
+		
+		JPanel panel_43 = new JPanel();
+		panel_43.setBackground(Color.BLACK);
+		panel_43.setBounds(56, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_43);
+		
+		JPanel panel_44 = new JPanel();
+		panel_44.setBackground(Color.BLACK);
+		panel_44.setBounds(0, 276, 56, 56);
+		frmDamas.getContentPane().add(panel_44);
+		
+		JPanel panel_45 = new JPanel();
+		panel_45.setBackground(Color.WHITE);
+		panel_45.setBounds(0, 221, 56, 56);
+		frmDamas.getContentPane().add(panel_45);
+		
+		JPanel panel_46 = new JPanel();
+		panel_46.setBackground(Color.WHITE);
+		panel_46.setBounds(388, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_46);
+		
+		JPanel panel_47 = new JPanel();
+		panel_47.setBackground(Color.BLACK);
+		panel_47.setBounds(388, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_47);
+		
+		JPanel panel_48 = new JPanel();
+		panel_48.setBackground(Color.BLACK);
+		panel_48.setBounds(333, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_48);
+		
+		JPanel panel_49 = new JPanel();
+		panel_49.setBackground(Color.WHITE);
+		panel_49.setBounds(333, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_49);
+		
+		JPanel panel_50 = new JPanel();
+		panel_50.setBackground(Color.WHITE);
+		panel_50.setBounds(278, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_50);
+		
+		JPanel panel_51 = new JPanel();
+		panel_51.setBackground(Color.BLACK);
+		panel_51.setBounds(278, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_51);
+		
+		JPanel panel_52 = new JPanel();
+		panel_52.setBackground(Color.BLACK);
+		panel_52.setBounds(223, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_52);
+		
+		JPanel panel_53 = new JPanel();
+		panel_53.setBackground(Color.WHITE);
+		panel_53.setBounds(223, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_53);
+		
+		JPanel panel_54 = new JPanel();
+		panel_54.setBackground(Color.WHITE);
+		panel_54.setBounds(167, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_54);
+		
+		JPanel panel_55 = new JPanel();
+		panel_55.setBackground(Color.BLACK);
+		panel_55.setBounds(167, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_55);
+		
+		JPanel panel_56 = new JPanel();
+		panel_56.setBackground(Color.BLACK);
+		panel_56.setBounds(278, 0, 56, 56);
+		frmDamas.getContentPane().add(panel_56);
+		
+		JPanel panel_57 = new JPanel();
+		panel_57.setBackground(Color.BLACK);
+		panel_57.setBounds(111, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_57);
+		
+		JPanel panel_58 = new JPanel();
+		panel_58.setBackground(Color.WHITE);
+		panel_58.setBounds(333, 0, 56, 56);
+		frmDamas.getContentPane().add(panel_58);
+		
+		JPanel panel_59 = new JPanel();
+		panel_59.setBackground(Color.WHITE);
+		panel_59.setBounds(111, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_59);
+		
+		JPanel panel_60 = new JPanel();
+		panel_60.setBackground(Color.WHITE);
+		panel_60.setBounds(56, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_60);
+		
+		JPanel panel_61 = new JPanel();
+		panel_61.setBackground(Color.BLACK);
+		panel_61.setBounds(56, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_61);
+		
+		JPanel panel_62 = new JPanel();
+		panel_62.setBackground(Color.BLACK);
+		panel_62.setBounds(0, 386, 56, 56);
+		frmDamas.getContentPane().add(panel_62);
+		
+		JPanel panel_63 = new JPanel();
+		panel_63.setBackground(Color.WHITE);
+		panel_63.setBounds(0, 331, 56, 56);
+		frmDamas.getContentPane().add(panel_63);
+	}
+	
+	private void crear_usuario(){
+		input = new JTextField();
+		input.setBounds(150, 13, 174, 41);
+		frmDamas.getContentPane().add(input);
+		input.setColumns(15);
+		
+		pwdContraseña = new JPasswordField();
+		pwdContraseña.setBounds(150, 67, 135, 22);
+		frmDamas.getContentPane().add(pwdContraseña);
+		
+		JLabel lblJugador = new JLabel("Usuario");
+		lblJugador.setBounds(25, 25, 56, 16);
+		frmDamas.getContentPane().add(lblJugador);
+		
+		JButton btnStart = new JButton("Crear");
+		btnStart.addMouseListener(new MouseAdapter() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				reiniciar_menu();	
+				patata=input.getText();
+				pass=String.valueOf(pwdContraseña.getPassword());
+				
+				try{
+					Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/dames", "danidele", "danidele");
+					Statement st = con.createStatement();
+					ResultSet rs = st.executeQuery("Select nombre from Usuarios");
+					
+					while (rs.next()){
+						codi=rs.getString("nombre");
+						if(patata.equals(codi)){
+							exist=true;
+						}
+					}	
+					if(exist){
+						aviso = new JTextField();
+						aviso.setFont(new Font("Verdana", Font.BOLD, 14));
+						aviso.setBackground(Color.red);
+						aviso.setHorizontalAlignment(SwingConstants.CENTER);
+						aviso.setText("El usuario "+patata+" ya existe");
+						aviso.setBounds(121, 190, 200, 22);
+						frmDamas.getContentPane().add(aviso);
+						aviso.setColumns(10);
+						
+						JButton btnVolver = new JButton("volver");
+						btnVolver.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								reiniciar_menu();
+								pantalla_inicio();
+							}
+						});
+						btnVolver.setFont(new Font("Verdana", Font.BOLD, 14));
+						btnVolver.setBounds(171, 220, 97, 25);
+						frmDamas.getContentPane().add(btnVolver);
+					}else{
+						int filesAfectades=st.executeUpdate("insert into Usuarios values ('"+patata+"','"+pass+"');");
+						aviso = new JTextField();
+						aviso.setFont(new Font("Verdana", Font.BOLD, 14));
+						aviso.setBackground(Color.green);
+						aviso.setHorizontalAlignment(SwingConstants.CENTER);
+						aviso.setText("Usuario creado: "+patata+" - "+pass);
+						aviso.setBounds(50, 190, 320, 22);
+						frmDamas.getContentPane().add(aviso);
+						aviso.setColumns(10);
+
+						JButton btnVolver = new JButton("volver");
+						btnVolver.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								reiniciar_menu();
+								pantalla_inicio();
+							}
+						});
+						btnVolver.setFont(new Font("Verdana", Font.BOLD, 14));
+						btnVolver.setBounds(171, 220, 97, 25);
+						frmDamas.getContentPane().add(btnVolver);
+					}
+					exist=false;
+						
+					
+				}catch (Exception v){
+					v.printStackTrace();
+				}
+				//pantalla_inicio();
+			}
+		});
+		btnStart.setBounds(164, 178, 97, 25);
+		frmDamas.getContentPane().add(btnStart);
+		
+		JButton btnVolver = new JButton("volver");
+		btnVolver.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				reiniciar_menu();
+				pantalla_inicio();
+			}
+		});
+		btnVolver.setBounds(30, 178, 97, 25);
+		frmDamas.getContentPane().add(btnVolver);
+		
+		JLabel lblContrasea = new JLabel("Contrase\u00F1a");
+		lblContrasea.setBounds(19, 70, 85, 16);
+		frmDamas.getContentPane().add(lblContrasea);
+	}
+	
+	private boolean comprobarUsuario(String patata, String pass){
+		boolean existe=false;
+		try{
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/dames", "danidele", "danidele");
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("Select * from Usuarios");
+			while (rs.next()){
+				codi=rs.getString("nombre");
+				codi2=rs.getString("contraseña");
+				if(patata.equals(codi) && pass.equals(codi2)){
+					existe=true;
+				}
+			}	
+		}catch(Exception b){
+			b.printStackTrace();
+		}
+		return existe;
+	}
+	
+	public static void drawPiece(int col, int row, Graphics g, Color color){
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	    ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		g.setColor(color);
+		g.fillOval((col*tileSize)+2, (row*tileSize)+2, tileSize-4, tileSize-4);
+	}
+	  
+    public void paintComponent(Graphics g){    
+        //super.paintComponent(g);    
+        Graphics2D g2 = (Graphics2D)g;    
+        g2.setColor(Color.blue);    
+        g2.drawOval(0, 0, 20,20);  
+        g2.fillOval(50,50,20,20);    
+    }
+	
+	private void reiniciar_menu(){
+		frmDamas.getContentPane().removeAll();
+		frmDamas.repaint();
+	}
+}
